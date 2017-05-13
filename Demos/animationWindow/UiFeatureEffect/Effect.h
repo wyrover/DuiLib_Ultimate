@@ -4,6 +4,10 @@
 #include "Graph/Graph_Rect.h"
 #include "Image/ImageProcess.h"
 
+#include <GdiPlus.h>
+
+using namespace Gdiplus;
+
 class CEffect : public IEffect
 {
 public:

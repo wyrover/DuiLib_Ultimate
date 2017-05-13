@@ -25,3 +25,73 @@ DuiLib_Ultimate是DuiLib库的增强拓展版，库修复了大量用户在使�
 - UILIB_RESOURCE        被弃用
 - UILIB_ZIP
 - UILIB_ZIPRESOURCE
+
+
+## git 流程
+
+1. fork 原始版本
+
+从 https://github.com/qdtroy/DuiLib_Ultimate fork 一份，pull 自己的仓库
+
+git@github.com:wyrover/DuiLib_Ultimate.git
+
+2. 添加原始库跟踪
+
+git remote add upstream https://github.com/qdtroy/DuiLib_Ultimate.git
+
+3. 获取原始仓库最新版
+
+```
+git fetch upstream
+git merge upstream/master 
+```
+
+或者
+```
+git pull upstream master
+```
+
+4. 创建自己的 develop 分支
+
+```
+git checkout -b develop master
+```
+
+
+5. 在 develop 分支工作一段时间后，合并到自己的 master 分支
+
+```
+# 切换到Master分支
+git checkout master
+
+# 对Develop分支进行合并
+git merge --no-ff develop
+```
+
+6. push 到自己的远程 master 分支
+
+
+7. pull request
+
+
+### 其他流程
+
+
+在 develop 分支基础上创建一个功能分支
+```
+git checkout -b feature-x develop
+```
+
+开发完成后，将功能分支合并到develop分支：
+```
+　　git checkout develop
+　　git merge --no-ff feature-x
+```
+删除feature分支：
+```
+　　git branch -d feature-x
+```
+
+## links
+
+- [Git分支管理策略](http://www.ruanyifeng.com/blog/2012/07/git.html)

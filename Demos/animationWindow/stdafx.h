@@ -14,7 +14,7 @@
 
 
 // TODO: 在此处引用程序需要的其他头文件
-#include "..\..\DuiLib\UIlib.h"
+#include "UIlib.h"
 using namespace DuiLib;
 
 #include "Controls/AnimLayout.h"
@@ -30,16 +30,3 @@ using namespace DuiLib;
 	typedef std::string		tstring;
 #endif
 
-#ifdef _DEBUG
-#   ifdef _UNICODE
-#       pragma comment(lib, "..\\..\\lib\\DuiLib_d.lib")
-#   else
-#       pragma comment(lib, "..\\..\\lib\\DuiLibA_d.lib")
-#   endif
-#else
-#   ifdef _UNICODE
-#       pragma comment(lib, "..\\..\\lib\\DuiLib.lib")
-#   else
-#       pragma comment(lib, "..\\..\\lib\\DuiLibA.lib")
-#   endif
-#endif

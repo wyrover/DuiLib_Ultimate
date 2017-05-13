@@ -5,6 +5,7 @@
 #include "Image\ColorHelper.h"
 #include "Motion\Motion.h"
 #include <time.h>
+
 #pragma warning ( disable : 4244)
 
 

@@ -279,6 +279,8 @@ workspace(path.getname(os.realpath(".")))
                 "DuiLib",
                 "3rd",               
             }    
+            pchsource "Demos/animationWindow/stdafx.cpp" 
+            pchheader "stdafx.h"
             links
             {
                 "comctl32.lib"
@@ -287,6 +289,7 @@ workspace(path.getname(os.realpath(".")))
             {
                 "DuiLib-s.lib",
             }   
+            
 
         project "ADMonSetup"
             location "build"
@@ -340,3 +343,5 @@ workspace(path.getname(os.realpath(".")))
                 "bin/lib",
                 "Demos/TroyBrowser/Lib"
             }
+
+        create_duilib_project("HiDPITest", "Demos")

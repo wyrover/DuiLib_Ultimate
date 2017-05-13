@@ -396,7 +396,7 @@ NTGraph;
 // Wrapper method implementations
 //
 
-#include "e:\devprojects\github\test\dlgdemo\debug\ntgraph.tli"
+//#include "e:\devprojects\github\test\dlgdemo\debug\ntgraph.tli"
 
 } // namespace NTGRAPHLib
 

@@ -11,23 +11,11 @@
 #include <objbase.h>
 #include <zmouse.h>
 
-#include "..\..\DuiLib\UIlib.h"
+#include "UIlib.h"
 
 using namespace DuiLib;
 
-#ifdef _DEBUG
-#   ifdef _UNICODE
-#       pragma comment(lib, "..\\..\\lib\\DuiLib_d.lib")
-#   else
-#       pragma comment(lib, "..\\..\\lib\\DuiLibA_d.lib")
-#   endif
-#else
-#   ifdef _UNICODE
-#       pragma comment(lib, "..\\..\\lib\\DuiLib.lib")
-#   else
-#       pragma comment(lib, "..\\..\\lib\\DuiLibA.lib")
-#   endif
-#endif
+
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

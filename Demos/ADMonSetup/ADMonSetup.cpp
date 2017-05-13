@@ -37,7 +37,7 @@ void InitResource()
 	{
 	case UILIB_FILE:
 		{
-			strResourcePath += _T("skin\\ADMonSetup\\");
+			strResourcePath += _T("..\\skin\\ADMonSetup\\");
 			CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
 			// 加载资源管理器
 			CResourceManager::GetInstance()->LoadResource(_T("res.xml"), NULL);

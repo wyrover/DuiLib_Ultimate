@@ -11,11 +11,11 @@
 void InitResource()
 {
 	// 资源类型
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	CPaintManagerUI::SetResourceType(UILIB_FILE);
-#else
-	CPaintManagerUI::SetResourceType(UILIB_ZIPRESOURCE);
-#endif
+//#else
+//	CPaintManagerUI::SetResourceType(UILIB_ZIPRESOURCE);
+//#endif
 	// 资源路径
 	CDuiString strResourcePath = CPaintManagerUI::GetInstancePath();
 	// 加载资源
@@ -23,7 +23,7 @@ void InitResource()
 	{
 	case UILIB_FILE:
 		{
-			strResourcePath += _T("skin\\duidemo\\");
+			strResourcePath += _T("..\\skin\\duidemo\\");
 			CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
 			// 加载资源管理器
 			CResourceManager::GetInstance()->LoadResource(_T("res.xml"), NULL);
@@ -31,7 +31,7 @@ void InitResource()
 		}
 	case UILIB_RESOURCE:
 		{
-			strResourcePath += _T("skin\\duidemo\\");
+			strResourcePath += _T("..\\skin\\duidemo\\");
 			CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
 			// 加载资源管理器
 			CResourceManager::GetInstance()->LoadResource(_T("IDR_RES"), _T("xml"));

@@ -5,11 +5,11 @@
 void InitResource()
 {	
 	// 资源类型
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	CPaintManagerUI::SetResourceType(UILIB_FILE);
-#else
-	CPaintManagerUI::SetResourceType(UILIB_ZIPRESOURCE);
-#endif
+//#else
+//	CPaintManagerUI::SetResourceType(UILIB_ZIPRESOURCE);
+//#endif
 	// 资源路径
 	CDuiString strResourcePath = CPaintManagerUI::GetInstancePath();
 	// 加载资源
@@ -17,7 +17,7 @@ void InitResource()
 	{
 	case UILIB_FILE:
 		{
-			strResourcePath += _T("skin\\xlgamebox\\");
+			strResourcePath += _T("..\\skin\\xlgamebox\\");
 			CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
 			// 加载资源管理器
 			CResourceManager::GetInstance()->LoadResource(_T("res.xml"), NULL);

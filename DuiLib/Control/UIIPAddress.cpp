@@ -72,11 +72,9 @@ namespace DuiLib
 
 		if (m_pOwner->GetText().IsEmpty())
 			m_pOwner->m_dwIP = GetLocalIpAddress();
-		
 		::SendMessage(m_hWnd, IPM_SETADDRESS, 0, m_pOwner->m_dwIP);
 		::ShowWindow(m_hWnd, SW_SHOW);
 		::SetFocus(m_hWnd);
-		
 
 		m_bInit = true;    
 	}
@@ -169,7 +167,7 @@ namespace DuiLib
 	//
 	IMPLEMENT_DUICONTROL(CIPAddressUI)
 
-	CIPAddressUI::CIPAddressUI()
+		CIPAddressUI::CIPAddressUI()
 	{
 		m_dwIP = GetLocalIpAddress();
 		m_bReadOnly = false;
@@ -307,5 +305,4 @@ namespace DuiLib
 	{
 		CLabelUI::SetAttribute(pstrName, pstrValue);
 	}
-
 }

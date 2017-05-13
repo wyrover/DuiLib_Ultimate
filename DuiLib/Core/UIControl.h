@@ -48,6 +48,8 @@ namespace DuiLib {
 		virtual void SetDropEnable(bool bDrop);
 
 		// 图形相关
+		LPCTSTR GetGradient();
+		void SetGradient(LPCTSTR pStrImage);
 		DWORD GetBkColor() const;
 		void SetBkColor(DWORD dwBackColor);
 		DWORD GetBkColor2() const;
@@ -114,12 +116,17 @@ namespace DuiLib {
 		virtual void SetMaxHeight(int cy);
 		virtual TPercentInfo GetFloatPercent() const;
 		virtual void SetFloatPercent(TPercentInfo piFloatPercent);
-
+		virtual void SetFloatAlign(UINT uAlign);
+		virtual UINT GetFloatAlign() const;
 		// 鼠标提示
 		virtual CDuiString GetToolTip() const;
 		virtual void SetToolTip(LPCTSTR pstrText);
 		virtual void SetToolTipWidth(int nWidth);
 		virtual int	  GetToolTipWidth(void);	// 多行ToolTip单行最长宽度
+		
+		// 光标
+		virtual WORD GetCursor();
+		virtual void SetCursor(WORD wCursor);
 
 		// 快捷键
 		virtual TCHAR GetShortcut() const;
@@ -163,6 +170,12 @@ namespace DuiLib {
 
 		virtual void Event(TEventUI& event);
 		virtual void DoEvent(TEventUI& event);
+
+		// 自定义(未处理的)属性
+		void AddCustomAttribute(LPCTSTR pstrName, LPCTSTR pstrAttr);
+		LPCTSTR GetCustomAttribute(LPCTSTR pstrName) const;
+		bool RemoveCustomAttribute(LPCTSTR pstrName);
+		void RemoveAllCustomAttribute();
 
 		virtual void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
 		CControlUI* ApplyAttributeList(LPCTSTR pstrList);
@@ -212,6 +225,7 @@ namespace DuiLib {
 		bool m_bFocused;
 		bool m_bFloat;
 		TPercentInfo m_piFloatPercent;
+		UINT m_uFloatAlign;
 		bool m_bSetPos; // 防止SetPos循环调用
 
 		bool m_bDragEnabled;
@@ -224,6 +238,7 @@ namespace DuiLib {
 		CDuiString m_sUserData;
 		UINT_PTR m_pTag;
 
+		CDuiString m_sGradient;
 		DWORD m_dwBackColor;
 		DWORD m_dwBackColor2;
 		DWORD m_dwBackColor3;
@@ -236,10 +251,13 @@ namespace DuiLib {
 		int m_nBorderSize;
 		int m_nBorderStyle;
 		int m_nTooltipWidth;
+		WORD m_wCursor;
 		SIZE m_cxyBorderRound;
 		RECT m_rcPaint;
 		RECT m_rcBorderSize;
 	    HINSTANCE m_instance;
+
+		CStdStringPtrMap m_mCustomAttrHash;
 	};
 
 } // namespace DuiLib

@@ -22,25 +22,12 @@ CPopWnd::~CPopWnd(void)
 void CPopWnd::OnFinalMessage( HWND hWnd)
 {
 	__super::OnFinalMessage(hWnd);
-}
-
-DuiLib::CDuiString CPopWnd::GetSkinFolder()
-{
-#ifdef _DEBUG
-	return _T("skin\\duidemo\\");
-#else
-	return _T("skin\\");
-#endif
+	delete this;
 }
 
 DuiLib::CDuiString CPopWnd::GetSkinFile()
 {
 	return _T("popup.xml");
-}
-
-UILIB_RESOURCETYPE CPopWnd::GetResourceType() const
-{
-	return UILIB_FILE;
 }
 
 LPCTSTR CPopWnd::GetWindowClassName( void ) const
@@ -58,8 +45,8 @@ void CPopWnd::OnClick( TNotifyUI &msg )
 		return; 
 	}
 	else if( msg.pSender == m_pMinBtn ) { 
-		CMsgWnd::MessageBox(m_hWnd, NULL, L"子子窗口");
-		/*SendMessage(WM_SYSCOMMAND, SC_MINIMIZE, 0); */return; }
+		//CMsgWnd::MessageBox(m_hWnd, NULL, _T("子子窗口"));
+		SendMessage(WM_SYSCOMMAND, SC_MINIMIZE, 0); return; }
 	else if( msg.pSender == m_pMaxBtn ) { 
 		SendMessage(WM_SYSCOMMAND, SC_MAXIMIZE, 0); return; }
 	else if( msg.pSender == m_pRestoreBtn ) { 

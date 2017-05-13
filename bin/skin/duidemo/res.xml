@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="utf-8"?>
 <Res>
   <Image id="sysbtn_menu_normal" path="sysbtn/btn_menu_normal.png" />
@@ -5,4 +6,14 @@
   <Image id="sysbtn_menu_pushed" path="sysbtn/btn_menu_down.png" />
   
   <Xml id="XML_MAIN" path="main.xml"/>
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<Res>
+  <Image id="sysbtn_menu_normal" path="sysbtn/btn_menu_normal.png" />
+  <Image id="sysbtn_menu_hot" path="sysbtn/btn_menu_highlight.png" />
+  <Image id="sysbtn_menu_pushed" path="sysbtn/btn_menu_down.png" />
+
+  <Xml id="XML_MAIN" path="main.xml"/>
+  <Xml id="XML_MSG" path="msg.xml"/>
+>>>>>>> 927e5f279e2c24d4d4c87461b75ba67933e62e95
 </Res>

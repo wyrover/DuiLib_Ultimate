@@ -42,9 +42,9 @@ DUI_BEGIN_MESSAGE_MAP(CMainWnd, WindowImplBase)
 	DUI_ON_MSGTYPE(DUI_MSGTYPE_CLICK,OnClick)
 	DUI_ON_MSGTYPE(DUI_MSGTYPE_SELECTCHANGED,OnSelectChanged)
 	DUI_ON_MSGTYPE(DUI_MSGTYPE_ITEMCLICK,OnItemClick)
-	DUI_END_MESSAGE_MAP()
+DUI_END_MESSAGE_MAP()
 
-	CMainWnd::CMainWnd(void)
+CMainWnd::CMainWnd(void)
 {
 	m_MainPage.SetPaintMagager(&m_pm);
 
@@ -56,37 +56,9 @@ CMainWnd::~CMainWnd(void)
 	RemoveVirtualWnd(_T("mainpage"));
 }
 
-DuiLib::CDuiString CMainWnd::GetSkinFolder()
-{
-#ifdef _DEBUG
-	return _T("skin\\BDWallPaper\\");
-#else
-	return _T("skin\\BDWallPaper\\");
-#endif
-}
-
 DuiLib::CDuiString CMainWnd::GetSkinFile()
 {
 	return _T("main.xml");
-}
-
-UILIB_RESOURCETYPE CMainWnd::GetResourceType() const
-{
-#ifdef _DEBUG
-	return UILIB_FILE;
-#else
-	return UILIB_ZIPRESOURCE;
-#endif
-}
-
-LPCTSTR CMainWnd::GetResourceID() const
-{
-	return _T("IDR_SKIN");
-}
-
-DuiLib::CDuiString CMainWnd::GetZIPFileName() const
-{
-	return _T("skin.zip");
 }
 
 LPCTSTR CMainWnd::GetWindowClassName( void ) const

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="utf-8"?>
 <Window >
   <Font id="100" name="宋体" size="18" underline="true" shared="true"/>
@@ -7,4 +8,17 @@
     <Label text="99" align="center"/>
     <Button style="btn_style" text="确认" font="100"/>
   </ListContainerElement>
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<Window >
+  <Font id="100" name="宋体" size="18" underline="true" shared="true"/>
+  <ListContainerElement height="30">
+    <Label text="Include测试" align="center"/>
+    <Label text="1002" align="center"/>
+    <Label text="99" align="center"/>
+    <Container >
+      <Button style="btn_style" float="true" pos="30,0,100,30" text="确认" font="100"/>
+    </Container>
+  </ListContainerElement>
+>>>>>>> 927e5f279e2c24d4d4c87461b75ba67933e62e95
 </Window>

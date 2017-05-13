@@ -5,7 +5,6 @@
 
 #include "../Utils/observer_impl_base.h"
 
-
 namespace DuiLib {
 
 struct ContextMenuParam
@@ -16,6 +15,11 @@ struct ContextMenuParam
 	HWND hWnd;
 };
 
+struct MenuItemInfo
+{
+	TCHAR szName[256];
+	bool bChecked;
+};
 struct MenuCmd
 {
 	TCHAR szName[256];
@@ -172,7 +176,7 @@ public:
 		return m_pMainWndPaintManager;
 	}
 
-	virtual void SetMenuCheckInfo(std::map<CDuiString,bool>* pInfo)
+	virtual void SetMenuCheckInfo(CStdStringPtrMap* pInfo)
 	{
 		if (pInfo != NULL)
 			m_pMenuCheckInfo = pInfo;
@@ -180,7 +184,7 @@ public:
 			m_pMenuCheckInfo = NULL;
 	}
 
-	virtual std::map<CDuiString,bool>* GetMenuCheckInfo() const
+	virtual CStdStringPtrMap* GetMenuCheckInfo() const
 	{
 		return m_pMenuCheckInfo;
 	}
@@ -188,9 +192,8 @@ public:
 protected:
 	typedef std::vector<MenuMenuReceiverImplBase*> ReceiversVector;
 	ReceiversVector *pReceivers_;
-
 	CPaintManagerUI* m_pMainWndPaintManager;
-	std::map<CDuiString,bool>* m_pMenuCheckInfo;
+	CStdStringPtrMap* m_pMenuCheckInfo;
 };
 
 ////////////////////////////////////////////////////
@@ -238,17 +241,18 @@ protected:
 /////////////////////////////////////////////////////////////////////////////////////
 //
 
-
 class CListUI;
+class CMenuWnd;
 class UILIB_API CMenuUI : public CListUI
 {
 	DECLARE_DUICONTROL(CMenuUI)
 public:
 	CMenuUI();
 	virtual ~CMenuUI();
-
+	CMenuWnd*	m_pWindow;
     LPCTSTR GetClass() const;
     LPVOID GetInterface(LPCTSTR pstrName);
+	UINT GetListType();
 
 	virtual void DoEvent(TEventUI& event);
 
@@ -276,11 +280,17 @@ public:
 		static MenuObserverImpl s_context_menu_observer;
 		return s_context_menu_observer;
 	}
+	static CMenuWnd* CreateMenu(CMenuElementUI* pOwner, STRINGorID xml, POINT point,
+		CPaintManagerUI* pMainPaintManager, CStdStringPtrMap* pMenuCheckInfo = NULL,
+		DWORD dwAlignment = eMenuAlignment_Left | eMenuAlignment_Top);
+	static void DestroyMenu();
+	static MenuItemInfo* SetMenuItemInfo(LPCTSTR pstrName, bool bChecked);
 
 public:
 	CMenuWnd();
 	~CMenuWnd();
-
+	void Close(UINT nRet = IDOK);
+	bool isClosing;
 	/*
 	 *	@pOwner 一级菜单不要指定这个参数，这是菜单内部使用的
 	 *	@xml	菜单的布局文件
@@ -289,8 +299,9 @@ public:
 	 *	@pMenuCheckInfo	保存菜单的单选和复选信息结构指针
 	 *	@dwAlignment		菜单的出现位置，默认出现在鼠标的右下侧。
 	 */
+
     void Init(CMenuElementUI* pOwner, STRINGorID xml, POINT point,
-		CPaintManagerUI* pMainPaintManager, std::map<CDuiString,bool>* pMenuCheckInfo = NULL,
+		CPaintManagerUI* pMainPaintManager, CStdStringPtrMap* pMenuCheckInfo = NULL,
 		DWORD dwAlignment = eMenuAlignment_Left | eMenuAlignment_Top);
     LPCTSTR GetWindowClassName() const;
     void OnFinalMessage(HWND hWnd);
@@ -312,6 +323,7 @@ public:
 
 	// 重新调整子菜单的大小
 	void ResizeSubMenu();
+	void setDPI(int DPI);
 
 public:
 
@@ -361,6 +373,8 @@ public:
 
 	void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
 
+	MenuItemInfo* GetItemInfo(LPCTSTR pstrName);
+	MenuItemInfo* SetItemInfo(LPCTSTR pstrName, bool bChecked);
 protected:
 	CMenuWnd*	m_pWindow;
 

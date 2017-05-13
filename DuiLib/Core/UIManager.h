@@ -2,7 +2,7 @@
 #define __UIMANAGER_H__
 
 #pragma once
-
+#define WM_USER_SET_DPI WM_USER + 200
 namespace DuiLib {
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -11,6 +11,15 @@ namespace DuiLib {
 	class CRichEditUI;
 	class CIDropTarget;
 
+	/////////////////////////////////////////////////////////////////////////////////////
+	//
+	enum UILIB_RESTYPE
+	{
+		UILIB_FILE=1,		// 来自磁盘文件
+		UILIB_ZIP,			// 来自磁盘zip压缩包
+		UILIB_RESOURCE,		// 来自资源
+		UILIB_ZIPRESOURCE,	// 来自资源的zip压缩包
+	};
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
 
@@ -43,11 +52,16 @@ namespace DuiLib {
 		UIEVENT_WINDOWSIZE,
 		UIEVENT_SETCURSOR,
 		UIEVENT_TIMER,
-		UIEVENT_NOTIFY,
-		UIEVENT_COMMAND,
 		UIEVENT__LAST,
 	};
 
+	typedef enum MSGTYPE_UI
+	{
+		// 内部保留消息
+		UIMSG_TRAYICON = WM_USER + 1,
+		// 程序自定义消息
+		UIMSG_USER = WM_USER + 100,
+	};
 	/////////////////////////////////////////////////////////////////////////////////////
 	//
 
@@ -106,19 +120,22 @@ namespace DuiLib {
 	typedef struct UILIB_API tagTDrawInfo
 	{
 		tagTDrawInfo();
-		tagTDrawInfo(LPCTSTR lpsz);
+		void Parse(LPCTSTR pStrImage, LPCTSTR pStrModify, CPaintManagerUI *paintManager);
 		void Clear();
+
 		CDuiString sDrawString;
-		bool bLoaded;
+		CDuiString sDrawModify;
 		CDuiString sImageName;
-		const TImageInfo* pImageInfo;
-		RECT rcDestOffset;
-		RECT rcBmpPart;
+		CDuiString sResType;
+		RECT rcDest;
+		RECT rcSource;
 		RECT rcCorner;
+		DWORD dwMask;
 		BYTE uFade;
 		bool bHole;
 		bool bTiledX;
 		bool bTiledY;
+		bool bHSL;
 	} TDrawInfo;
 
 	typedef struct UILIB_API tagTPercentInfo
@@ -141,6 +158,7 @@ namespace DuiLib {
 		CStdStringPtrMap m_ImageHash;
 		CStdStringPtrMap m_AttrHash;
 		CStdStringPtrMap m_StyleHash;
+		CStdStringPtrMap m_DrawInfoHash;
 	} TResInfo;
 
 	// Structure for notifications from the system
@@ -207,8 +225,6 @@ namespace DuiLib {
 		HDC GetPaintDC() const;
 		HWND GetPaintWindow() const;
 		HWND GetTooltipWindow() const;
-		int GetTooltipWindowWidth() const;
-		void SetTooltipWindowWidth(int iWidth);
 		int GetHoverTime() const;
 		void SetHoverTime(int iTime);
 
@@ -238,8 +254,8 @@ namespace DuiLib {
 		void SetLayeredInset(RECT& rcLayeredInset);
 		BYTE GetLayeredOpacity();
 		void SetLayeredOpacity(BYTE nOpacity);
-		LPCTSTR GetLayeredImage();
-		void SetLayeredImage(LPCTSTR pstrImage);
+		//LPCTSTR GetLayeredImage();
+		//void SetLayeredImage(LPCTSTR pstrImage);
 
 		CShadowUI* GetShadow();
 		// 光标
@@ -260,14 +276,17 @@ namespace DuiLib {
 		static HINSTANCE GetResourceDll();
 		static const CDuiString& GetResourcePath();
 		static const CDuiString& GetResourceZip();
+		static const CDuiString& GetResourceZipPwd();
 		static bool IsCachedResourceZip();
 		static HANDLE GetResourceZipHandle();
 		static void SetInstance(HINSTANCE hInst);
 		static void SetCurrentPath(LPCTSTR pStrPath);
 		static void SetResourceDll(HINSTANCE hInst);
 		static void SetResourcePath(LPCTSTR pStrPath);
-		static void SetResourceZip(LPVOID pVoid, unsigned int len);
-		static void SetResourceZip(LPCTSTR pstrZip, bool bCachedResourceZip = false);
+		static void SetResourceZip(LPVOID pVoid, unsigned int len, LPCTSTR password = NULL);
+		static void SetResourceZip(LPCTSTR pstrZip, bool bCachedResourceZip = false, LPCTSTR password = NULL);
+		static void SetResourceType(int nType);
+		static int GetResourceType();
 		static bool GetHSL(short* H, short* S, short* L);
 		static void SetHSL(bool bUseHSL, short H, short S, short L); // H:0~360, S:0~200, L:0~200 
 		static void ReloadSkin();
@@ -294,6 +313,7 @@ namespace DuiLib {
 		TFontInfo* GetDefaultFontInfo();
 		void SetDefaultFont(LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false);
 		DWORD GetCustomFontCount(bool bShared = false) const;
+		void AddFontArray(LPCTSTR pstrPath);
 		HFONT AddFont(int id, LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic, bool bShared = false);
 		HFONT GetFont(int id);
 		HFONT GetFont(LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
@@ -313,6 +333,10 @@ namespace DuiLib {
 		void RemoveAllImages(bool bShared = false);
 		static void ReloadSharedImages();
 		void ReloadImages();
+
+		const TDrawInfo* GetDrawInfo(LPCTSTR pStrImage, LPCTSTR pStrModify);
+		void RemoveDrawInfo(LPCTSTR pStrImage, LPCTSTR pStrModify);
+		void RemoveAllDrawInfos();
 
 		void AddDefaultAttributeList(LPCTSTR pStrControlName, LPCTSTR pStrControlAttrList, bool bShared = false);
 		LPCTSTR GetDefaultAttributeList(LPCTSTR pStrControlName) const;
@@ -403,6 +427,12 @@ namespace DuiLib {
 		static bool TranslateMessage(const LPMSG pMsg);
 		static void Term();
 
+		CDPI* GetDPIObj();
+		void ResetDPIAssets();
+		void RebuildFont(TFontInfo* pFontInfo);
+		void SetDPI(int iDPI);
+		static void SetAllDPI(int iDPI);
+
 		bool MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
 		bool PreMessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
 		void UsedVirtualWnd(bool bUsed);
@@ -433,6 +463,8 @@ namespace DuiLib {
 		HBITMAP m_hbmpBackground;
 		COLORREF* m_pBackgroundBits;
 
+		CDPI* m_pDPI;
+
 		bool m_bShowUpdateRect;
 		// 是否开启Gdiplus
 		bool m_bUseGdiplusText;
@@ -443,7 +475,7 @@ namespace DuiLib {
 		// 提示信息
 		HWND m_hwndTooltip;
 		TOOLINFO m_ToolTip;
-		
+		int m_nTooltipHoverTime;
 		// RichEdit光标
 		RECT m_rtCaret;
 		bool m_bCaretActive;
@@ -478,7 +510,7 @@ namespace DuiLib {
 		RECT m_rcLayeredInset;
 		bool m_bLayeredChanged;
 		RECT m_rcLayeredUpdate;
-		TDrawInfo m_diLayered;
+		//TDrawInfo m_diLayered;
 
 		bool m_bMouseTracking;
 		bool m_bMouseCapture;
@@ -496,6 +528,7 @@ namespace DuiLib {
 		CStdPtrArray m_aDelayedCleanup;
 		CStdPtrArray m_aAsyncNotify;
 		CStdPtrArray m_aFoundControls;
+		CStdPtrArray m_aFonts;
 		CStdStringPtrMap m_mNameHash;
 		CStdStringPtrMap m_mWindowCustomAttrHash;
 		CStdStringPtrMap m_mOptionGroup;
@@ -512,8 +545,10 @@ namespace DuiLib {
 		static HINSTANCE m_hResourceInstance;
 		static CDuiString m_pStrResourcePath;
 		static CDuiString m_pStrResourceZip;
+		static CDuiString m_pStrResourceZipPwd;
 		static HANDLE m_hResourceZip;
 		static bool m_bCachedResourceZip;
+		static int m_nResType;
 		static TResInfo m_SharedResInfo;
 		static bool m_bUseHSL;
 		static short m_H;

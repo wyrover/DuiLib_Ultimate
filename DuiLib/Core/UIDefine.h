@@ -1,9 +1,36 @@
 #pragma once
+
 namespace DuiLib
 {
 #define MAX_FONT_ID		30000
 #define CARET_TIMERID	0x1999
 
+	// 列表类型
+	enum ListType
+	{
+		LT_LIST = 0,
+		LT_COMBO,
+		LT_TREE,
+		LT_MENU,
+	};
+
+	// 鼠标光标定义
+#define DUI_ARROW           32512
+#define DUI_IBEAM           32513
+#define DUI_WAIT            32514
+#define DUI_CROSS           32515
+#define DUI_UPARROW         32516
+#define DUI_SIZE            32640
+#define DUI_ICON            32641
+#define DUI_SIZENWSE        32642
+#define DUI_SIZENESW        32643
+#define DUI_SIZEWE          32644
+#define DUI_SIZENS          32645
+#define DUI_SIZEALL         32646
+#define DUI_NO              32648
+#define DUI_HAND            32649
+
+	// 消息类型
 	enum DuiSig
 	{
 		DuiSig_end = 0, // [marks end of message map]
@@ -11,6 +38,7 @@ namespace DuiLib
 		DuiSig_vn,      // void (TNotifyUI)
 	};
 
+	// 核心控件
 	class CControlUI;
 
 	// Structure for notifications to the outside world
@@ -48,6 +76,7 @@ namespace DuiLib
 #define DUI_MSGTYPE_RETURN                 (_T("return"))
 #define DUI_MSGTYPE_SCROLL                 (_T("scroll"))
 
+#define DUI_MSGTYPE_PREDROPDOWN            (_T("predropdown"))
 #define DUI_MSGTYPE_DROPDOWN               (_T("dropdown"))
 #define DUI_MSGTYPE_SETFOCUS               (_T("setfocus"))
 
@@ -77,14 +106,19 @@ namespace DuiLib
 #define DUI_MSGTYPE_SELECTCHANGED 		   (_T("selectchanged"))
 #define DUI_MSGTYPE_UNSELECTED	 		   (_T("unselected"))
 
-#define DUI_MSGTYPE_TREEITEMSELECT 			(_T("treeitemselect"))
-#define DUI_MSGTYPE_TREEITEMEXPAND 			(_T("treeitemexpand"))
-#define DUI_MSGTYPE_TREEITEMACTIVATE 		(_T("treeitemactivate"))
 #define DUI_MSGTYPE_TREEITEMDBCLICK 		(_T("treeitemdbclick"))
 #define DUI_MSGTYPE_CHECKCLICK				(_T("checkclick"))
+#define DUI_MSGTYPE_TEXTROLLEND 			(_T("textrollend"))
+#define DUI_MSGTYPE_COLORCHANGED		    (_T("colorchanged"))
+
+#define DUI_MSGTYPE_LISTITEMSELECT 		   	(_T("listitemselect"))
+#define DUI_MSGTYPE_LISTITEMCHECKED 		(_T("listitemchecked"))
+#define DUI_MSGTYPE_COMBOITEMSELECT 		(_T("comboitemselect"))
+#define DUI_MSGTYPE_LISTHEADERCLICK			(_T("listheaderclick"))
+#define DUI_MSGTYPE_LISTHEADITEMCHECKED		(_T("listheaditemchecked"))
+#define DUI_MSGTYPE_LISTPAGECHANGED			(_T("listpagechanged"))
+
 	//////////////////////////////////////////////////////////////////////////
-
-
 
 	struct DUI_MSGMAP_ENTRY;
 	struct DUI_MSGMAP
@@ -256,6 +290,7 @@ protected:                                                                \
 #define  DUI_CTR_IPADDRESS                       (_T("IPAddress"))
 
 #define  DUI_CTR_LISTHEADER                      (_T("ListHeader"))
+#define  DUI_CTR_LISTFOOTER                      (_T("ListFooter"))
 #define  DUI_CTR_TILELAYOUT                      (_T("TileLayout"))
 #define  DUI_CTR_WEBBROWSER                      (_T("WebBrowser"))
 
@@ -274,9 +309,11 @@ protected:                                                                \
 
 #define  DUI_CTR_LISTCONTAINERELEMENT            (_T("ListContainerElement"))
 
+#define  DUI_CTR_TEXTSCROLL						 (_T("TextScroll"))
+
+#define DUI_CTR_COLORPALETTE					  (_T("ColorPalette"))
 	///
 	//////////////END控件名称宏定义//////////////////////////////////////////////////
-
 
 	}// namespace DuiLib
 

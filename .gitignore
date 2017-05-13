@@ -18,6 +18,7 @@
 *.cache
 *.exp
 *.aps
+*.iobj
 Temp/duidemo/Debug/duidemo.res
 Temp/duidemo/Debug/duidemo_d.exe.embed.manifest.res
 Temp/duidemo/Debug/duidemo_d_manifest.rc
@@ -30,3 +31,11 @@ DuiLib.suo
 *.res
 Temp/duidemo/Debug/MFCApp_manifest.rc
 *.unsuccessfulbuild
+Temp
+*.ilk
+Demos/ADMonSetup/SDebug/
+3rd/libcef_dll_wrapper/Lib/
+DuiLib.VC.db
+DuiLib2015.VC.db
+DuiLib2015.sln
+Demos/ADMonSetup/Debug/

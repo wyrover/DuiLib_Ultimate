@@ -5,70 +5,73 @@
 #include "SearchWnd.h"
 #include "resource.h"
 
-class CGameBoxFrame : public CWindowWnd, public INotifyUI, public CWebBrowserEventHandler
+class CGameBoxFrame : public WindowImplBase, public CWebBrowserEventHandler
 {
 public:
 	CGameBoxFrame() {
 
-	};
-
-public:
-	void Init() {
-		m_pSearchWnd  = new CSearchWnd(m_pm.GetRoot());
-		m_pSearchWnd->Create(m_hWnd,  _T("searchwnd"), WS_POPUP, WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE);
-		::SetWindowPos(m_pSearchWnd->GetHWND(), NULL, 0,0,1, 1, SWP_NOACTIVATE);
-		m_pSearchWnd->ShowWindow(true);
-
-		m_pCloseBtn = static_cast<CButtonUI*>(m_pm.FindControl(_T("closebtn")));
-		m_pMaxBtn = static_cast<CButtonUI*>(m_pm.FindControl(_T("maxbtn")));
-		m_pRestoreBtn = static_cast<CButtonUI*>(m_pm.FindControl(_T("restorebtn")));
-		m_pMinBtn = static_cast<CButtonUI*>(m_pm.FindControl(_T("minbtn")));
-		m_pGameList = static_cast<CTileLayoutUI*>(m_pm.FindControl(_T("gamelist")));
-		m_pBaiduList = static_cast<CTileLayoutUI*>(m_pm.FindControl(_T("baidulist")));
-		m_pFindList = static_cast<CHorizontalLayoutUI*>(m_pm.FindControl(_T("findlist")));
-
-		//CWebBrowserUI* pBrowser = static_cast<CWebBrowserUI*>(m_pm.FindControl(_T("baidubrowser")));
-		//pBrowser->SetWebBrowserEventHandler(this);
 	}
 
-	void OnPrepare() {
+	CDuiString GetSkinFile()
+	{
+		return _T("skin.xml");
+	}
+	
+	CControlUI* CreateControl(LPCTSTR pstrClass)
+	{
+		if( _tcsicmp(pstrClass, _T("GameList")) == 0 ) return new CGameListUI;
+		else if( _tcsicmp(pstrClass, _T("GameItem")) == 0 ) return new CGameItemUI;
+		else if( _tcsicmp(pstrClass, _T("ShortCut")) == 0 ) return new CShortCutUI;
+		else if( _tcsicmp(pstrClass, _T("LabelMutiline")) == 0 ) return new CLabelMutilineUI;
+		return NULL;
+	}
+
+public:
+	void InitWindow()
+	{
+		// 搜索窗口
+		m_pSearchWnd  = new CSearchWnd(m_pm.GetRoot());
+		m_pSearchWnd->Create(m_hWnd,  _T("searchwnd"), WS_POPUP, WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE);
+		::SetWindowPos(m_pSearchWnd->GetHWND(), NULL, 0,0,1,1, SWP_NOACTIVATE);
+		m_pSearchWnd->ShowWindow(true);
+
+		// 初始化控件
+		m_pGameList = (CTileLayoutUI*)(m_pm.FindControl(_T("gamelist")));
+		m_pFindList = (CHorizontalLayoutUI*)(m_pm.FindControl(_T("findlist")));
+
+		
+		CDialogBuilderCallbackEx callback;
 		for (int i = 0; i < 60; i++)
 		{
-			CDialogBuilderCallbackEx callback;
 			CDialogBuilder builder;
-			CContainerUI* pGameItem = static_cast<CContainerUI*>(builder.Create(_T("gameitem.xml"), (UINT)0, &callback));
+			CControlUI* pGameItem = static_cast<CControlUI*>(builder.Create(_T("gameitem.xml"), (UINT)0, &callback, &m_pm));
 			m_pGameList->Add(pGameItem);
-
-			CLabelUI *pIcon = static_cast<CLabelUI*>(pGameItem->FindSubControl(_T("gameitem_icon")));
-			CLabelUI *pText = static_cast<CLabelUI*>(pGameItem->FindSubControl(_T("gameitem_text")));
-
-			//CDuiString sText;
-			//sText.Format(_T("游戏%d"), i);
-			//pText->SetText(sText);
+			CDuiString sText;
+			sText.Format(_T("游戏%d"), i);
+			pGameItem->SetText(sText);
 		}
 
-		for (int i = 0; i < 6; i++)
-		{
-			CDialogBuilderCallbackEx callback;
-			CDialogBuilder builder;
-			CContainerUI* pGameItem = static_cast<CContainerUI*>(builder.Create(_T("gameitem.xml"), (UINT)0, &callback));
-			//m_pFindList->Add(pGameItem);
+		if(m_pFindList) {
+			for (int i = 0; i < 6; i++)
+			{
+				CDialogBuilder builder;
+				CControlUI* pGameItem = static_cast<CControlUI*>(builder.Create(_T("gameitem.xml"), (UINT)0, &callback, &m_pm));
+				m_pFindList->Add(pGameItem);
 
-			CLabelUI *pIcon = static_cast<CLabelUI*>(pGameItem->FindSubControl(_T("gameitem_icon")));
-			CLabelUI *pText = static_cast<CLabelUI*>(pGameItem->FindSubControl(_T("gameitem_text")));
+				CDuiString sText;
+				sText.Format(_T("查找-游戏%d"), i);
+				pGameItem->SetText(sText);
+			}
 
-			//CDuiString sText;
-			//sText.Format(_T("查找-游戏%d"), i);
-			//pText->SetText(sText);
 		}
-
-		// 添加游戏列表
-		GameListUI::Node* pGameNode = NULL;
-		GameListUI::Node* pCategoryNode1 = AddCategoryNode(_T("分类一"), 1);
-		GameListUI::Node* pCategoryNode2 = AddCategoryNode(_T("分类二"), 1);
-		GameListUI::Node* pCategoryNode3 = AddCategoryNode(_T("分类三"), 1);
-		GameListUI::Node* pCategoryNode4 = AddCategoryNode(_T("分类四"), 1);
 		
+		// 添加游戏列表
+		CGameListUI::Node* pGameNode = NULL;
+		CGameListUI::Node* pCategoryNode1 = AddCategoryNode(_T("分类一"), 1);
+		CGameListUI::Node* pCategoryNode2 = AddCategoryNode(_T("分类二"), 1);
+		CGameListUI::Node* pCategoryNode3 = AddCategoryNode(_T("分类三"), 1);
+		CGameListUI::Node* pCategoryNode4 = AddCategoryNode(_T("分类四"), 1);
+
 		for( int i = 0; i < 6; ++i )
 		{
 			AddGameNode(_T("二级游戏"), pCategoryNode1, i);
@@ -77,9 +80,8 @@ public:
 			AddGameNode(_T("二级游戏"), pCategoryNode4, i);
 		}
 
-		GameListUI* pGameList = static_cast<GameListUI*>(m_pm.FindControl(_T("categorylist")));
+		CGameListUI* pGameList = static_cast<CGameListUI*>(m_pm.FindControl(_T("categorylist")));
 		pGameList->RemoveNode(pCategoryNode4);
-
 	}
 
 	void OnSearchEditChanged()
@@ -90,7 +92,7 @@ public:
 		::ClientToScreen(m_hWnd, &ptPos);
 		SetWindowPos(m_pSearchWnd->GetHWND(), NULL, ptPos.x, ptPos.y, rcEdit.right - rcEdit.left, 200, SWP_NOACTIVATE);
 		if(!::IsWindowVisible(m_pSearchWnd->GetHWND()))
-		m_pSearchWnd->ShowWindow(true, false);
+			m_pSearchWnd->ShowWindow(true, false);
 		CDuiString sText = pEdit->GetText();
 
 		m_pSearchWnd->RemoveAll();
@@ -106,8 +108,8 @@ public:
 		if(sName.CompareNoCase(_T("foldbtn")) == 0)
 		{
 			pControl->SetVisible(false);
-			GameListUI* pGameList = static_cast<GameListUI*>(m_pm.FindControl(_T("categorylist")));
-			GameListUI::Node *pRoot = pGameList->GetRoot();
+			CGameListUI* pGameList = static_cast<CGameListUI*>(m_pm.FindControl(_T("categorylist")));
+			CGameListUI::Node *pRoot = pGameList->GetRoot();
 			for(int i = 0; i < pRoot->num_children(); i++)
 			{
 				pGameList->ExpandNode(pRoot->child(i), false);
@@ -119,8 +121,8 @@ public:
 		else if(sName.CompareNoCase(_T("unfoldbtn")) == 0)
 		{
 			pControl->SetVisible(false);
-			GameListUI* pGameList = static_cast<GameListUI*>(m_pm.FindControl(_T("categorylist")));
-			GameListUI::Node *pRoot = pGameList->GetRoot();
+			CGameListUI* pGameList = static_cast<CGameListUI*>(m_pm.FindControl(_T("categorylist")));
+			CGameListUI::Node *pRoot = pGameList->GetRoot();
 			for(int i = 0; i < pRoot->num_children(); i++)
 			{
 				pGameList->ExpandNode(pRoot->child(i), true);
@@ -150,7 +152,7 @@ public:
 		sUrl.Format(_T("http://www.baidu.com/s?wd=%s"), sText);
 
 		CWebBrowserUI* pBrowser = static_cast<CWebBrowserUI*>(m_pm.FindControl(_T("baidubrowser")));
-		pBrowser->Navigate2(sUrl);
+		//pBrowser->Navigate2(sUrl);
 	}
 	void OnSearchItemSelect(CControlUI *pControl)
 	{
@@ -181,11 +183,11 @@ public:
 		return S_OK;
 	}
 
-	void OnCategorySelect(GameListUI *pList, int nCurSel, int nOldSel)
+	void OnCategorySelect(CGameListUI *pList, int nCurSel, int nOldSel)
 	{
 		CListLabelElementUI *pItem = (CListLabelElementUI*)pList->GetItemAt(nCurSel);
 		if( _tcscmp(pItem->GetClass(), _T("ListLabelElementUI")) == 0 ) {
-			GameListUI::Node* node = (GameListUI::Node*)pItem->GetTag();
+			CGameListUI::Node* node = (CGameListUI::Node*)pItem->GetTag();
 			if( node->data()._level == 0 ) {
 				if(node->data()._expand) pList->SelectItem(nCurSel + 1);
 			}
@@ -217,27 +219,27 @@ public:
 		}
 	}
 public:
-	GameListUI::Node* AddCategoryNode(CDuiString sText, int nID)
+	CGameListUI::Node* AddCategoryNode(CDuiString sText, int nID)
 	{
-		GameListUI* pGameList = static_cast<GameListUI*>(m_pm.FindControl(_T("categorylist")));
-
+		CGameListUI* pGameList = static_cast<CGameListUI*>(m_pm.FindControl(_T("categorylist")));
+		if(!pGameList) return NULL;
 		CDuiString sIcon = _T("gameicons.png");
 		CDuiString sFormat;
 		sFormat.Format(_T("{x 4}{i %s 2 0}{x 4}%s"), sIcon.GetData(), sText.GetData());
-		GameListUI::Node* pCategoryNode = pGameList->AddNode(sFormat, nID);
+		CGameListUI::Node* pCategoryNode = pGameList->AddNode(sFormat, nID);
 
 		return pCategoryNode;
 	}
 
-	GameListUI::Node* AddGameNode(CDuiString sText, GameListUI::Node *Category, int nID)
+	CGameListUI::Node* AddGameNode(CDuiString sText, CGameListUI::Node *Category, int nID)
 	{
-		GameListUI* pGameList = static_cast<GameListUI*>(m_pm.FindControl(_T("categorylist")));
-
+		CGameListUI* pGameList = (CGameListUI*)Category->data()._pListElement->GetOwner();
+		if(!pGameList) return NULL;
 		CDuiString sIcon = _T("gameicons.png");
 		CDuiString sFormat;
 		sFormat.Format(_T("{x 4}{i %s 2 1}{x 4}%s"), sIcon.GetData(), sText.GetData());
 
-		GameListUI::Node* pGameNode = pGameList->AddNode(sFormat, nID, Category);
+		CGameListUI::Node* pGameNode = pGameList->AddNode(sFormat, nID, Category);
 
 		return pGameNode;
 	}
@@ -249,19 +251,7 @@ public:
 
 	void Notify(TNotifyUI& msg)
 	{
-		if( msg.sType == _T("windowinit") ) OnPrepare();
-		else if( msg.sType == _T("click") ) {
-			if( msg.pSender == m_pCloseBtn ) {
-				PostQuitMessage(0);
-				return; 
-			}
-			else if( msg.pSender == m_pMinBtn ) { 
-				SendMessage(WM_SYSCOMMAND, SC_MINIMIZE, 0); return; }
-			else if( msg.pSender == m_pMaxBtn ) { 
-				SendMessage(WM_SYSCOMMAND, SC_MAXIMIZE, 0); return; }
-			else if( msg.pSender == m_pRestoreBtn ) { 
-				SendMessage(WM_SYSCOMMAND, SC_RESTORE, 0); return; }
-			
+		if( msg.sType == _T("click") ) {
 			// 按钮消息
 			OnLClick(msg.pSender);
 		}
@@ -280,16 +270,16 @@ public:
 			CDuiString name = msg.pSender->GetName();
 			CTabLayoutUI* pControl = static_cast<CTabLayoutUI*>(m_pm.FindControl(_T("switch")));
 			if(name==_T("game_tab"))
-				 pControl->SelectItem(0);
+				pControl->SelectItem(0);
 			else if(name==_T("baidu_tab"))
-				 pControl->SelectItem(1);
+				pControl->SelectItem(1);
 		}
 		else if( msg.sType == _T("itemclick") ) {
-			GameListUI* pGameList = static_cast<GameListUI*>(m_pm.FindControl(_T("categorylist")));
+			CGameListUI* pGameList = static_cast<CGameListUI*>(m_pm.FindControl(_T("categorylist")));
 			if( pGameList->GetItemIndex(msg.pSender) != -1 )
 			{
 				if( _tcscmp(msg.pSender->GetClass(), _T("ListLabelElementUI")) == 0 ) {
-					GameListUI::Node* node = (GameListUI::Node*)msg.pSender->GetTag();
+					CGameListUI::Node* node = (CGameListUI::Node*)msg.pSender->GetTag();
 
 					POINT pt = { 0 };
 					::GetCursorPos(&pt);
@@ -303,7 +293,7 @@ public:
 		}
 		else if(msg.sType == _T("itemselect"))
 		{
-			GameListUI* pGameList = static_cast<GameListUI*>(m_pm.FindControl(_T("categorylist")));
+			CGameListUI* pGameList = static_cast<CGameListUI*>(m_pm.FindControl(_T("categorylist")));
 			if( pGameList == msg.pSender )
 			{
 				OnCategorySelect(pGameList, (int)msg.wParam, (int)msg.lParam);
@@ -314,11 +304,11 @@ public:
 			}
 		}
 		else if( msg.sType == _T("itemactivate") ) {
-			GameListUI* pGameList = static_cast<GameListUI*>(m_pm.FindControl(_T("categorylist")));
+			CGameListUI* pGameList = static_cast<CGameListUI*>(m_pm.FindControl(_T("categorylist")));
 			if( pGameList->GetItemIndex(msg.pSender) != -1 )
 			{
 				if( _tcscmp(msg.pSender->GetClass(), _T("ListLabelElementUI")) == 0 ) {
-					GameListUI::Node* node = (GameListUI::Node*)msg.pSender->GetTag();
+					CGameListUI::Node* node = (CGameListUI::Node*)msg.pSender->GetTag();
 					pGameList->ExpandNode(node, !node->data()._expand);
 
 					if( node->data()._level == 0 && node->data()._expand) {
@@ -327,131 +317,16 @@ public:
 				}
 			}
 		}
+
+		return WindowImplBase::Notify(msg);
 	}
 
-	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	LRESULT OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled)
 	{
-		// ICONS 图标加载
-		SetIcon(IDR_MAINFRAME);
-
-		LONG styleValue = ::GetWindowLong(*this, GWL_STYLE);
-		styleValue &= ~WS_CAPTION;
-		::SetWindowLong(*this, GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-
-		m_pm.Init(m_hWnd);
-		CDialogBuilder builder;
-		CDialogBuilderCallbackEx cb;
-		CControlUI* pRoot = builder.Create(_T("skin.xml"), (UINT)0,  &cb, &m_pm);
-		ASSERT(pRoot && "Failed to parse XML");
-		m_pm.AttachDialog(pRoot);
-		m_pm.AddNotifier(this);
-
-		Init();
+		bHandled = TRUE;
+		PostQuitMessage(0);
 		return 0;
 	}
-
-	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		bHandled = FALSE;
-		return 0;
-	}
-
-	LRESULT OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		::PostQuitMessage(0L);
-
-		bHandled = FALSE;
-		return 0;
-	}
-
-	LRESULT OnNcActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-        if( ::IsIconic(*this) ) bHandled = FALSE;
-        return (wParam == 0) ? TRUE : FALSE;
-	}
-
-	LRESULT OnNcCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		return 0;
-	}
-
-	LRESULT OnNcPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		return 0;
-	}
-
-	LRESULT OnNcHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		POINT pt; pt.x = GET_X_LPARAM(lParam); pt.y = GET_Y_LPARAM(lParam);
-		::ScreenToClient(*this, &pt);
-
-		RECT rcClient;
-		::GetClientRect(*this, &rcClient);
-
-		if( !::IsZoomed(*this) ) {
-			RECT rcSizeBox = m_pm.GetSizeBox();
-			if( pt.y < rcClient.top + rcSizeBox.top ) {
-				if( pt.x < rcClient.left + rcSizeBox.left ) return HTTOPLEFT;
-				if( pt.x > rcClient.right - rcSizeBox.right ) return HTTOPRIGHT;
-				return HTTOP;
-			}
-			else if( pt.y > rcClient.bottom - rcSizeBox.bottom ) {
-				if( pt.x < rcClient.left + rcSizeBox.left ) return HTBOTTOMLEFT;
-				if( pt.x > rcClient.right - rcSizeBox.right ) return HTBOTTOMRIGHT;
-				return HTBOTTOM;
-			}
-			if( pt.x < rcClient.left + rcSizeBox.left ) return HTLEFT;
-			if( pt.x > rcClient.right - rcSizeBox.right ) return HTRIGHT;
-		}
-
-		RECT rcCaption = m_pm.GetCaptionRect();
-		if( pt.x >= rcClient.left + rcCaption.left && pt.x < rcClient.right - rcCaption.right \
-			&& pt.y >= rcCaption.top && pt.y < rcCaption.bottom ) {
-				CControlUI* pControl = static_cast<CControlUI*>(m_pm.FindControl(pt));
-				if( pControl && _tcscmp(pControl->GetClass(), _T("ButtonUI")) != 0 && 
-					_tcscmp(pControl->GetClass(), _T("OptionUI")) != 0 &&
-					_tcscmp(pControl->GetClass(), _T("TextUI")) != 0 )
-					return HTCAPTION;
-		}
-
-		return HTCLIENT;
-	}
-
-	LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-        SIZE szRoundCorner = m_pm.GetRoundCorner();
-        if( !::IsIconic(*this) && (szRoundCorner.cx != 0 || szRoundCorner.cy != 0) ) {
-            CDuiRect rcWnd;
-            ::GetWindowRect(*this, &rcWnd);
-            rcWnd.Offset(-rcWnd.left, -rcWnd.top);
-            rcWnd.right++; rcWnd.bottom++;
-            HRGN hRgn = ::CreateRoundRectRgn(rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom, szRoundCorner.cx, szRoundCorner.cy);
-            ::SetWindowRgn(*this, hRgn, TRUE);
-            ::DeleteObject(hRgn);
-        }
-
-        bHandled = FALSE;
-        return 0;
-	}
-
-	LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		MONITORINFO oMonitor = {};
-		oMonitor.cbSize = sizeof(oMonitor);
-		::GetMonitorInfo(::MonitorFromWindow(*this, MONITOR_DEFAULTTOPRIMARY), &oMonitor);
-		CDuiRect rcWork = oMonitor.rcWork;
-		rcWork.Offset(-rcWork.left, -rcWork.top);
-
-		LPMINMAXINFO lpMMI = (LPMINMAXINFO) lParam;
-		lpMMI->ptMaxPosition.x	= rcWork.left;
-		lpMMI->ptMaxPosition.y	= rcWork.top;
-		lpMMI->ptMaxSize.x		= rcWork.right;
-		lpMMI->ptMaxSize.y		= rcWork.bottom;
-
-		bHandled = FALSE;
-		return 0;
-	}
-
 	LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		// 有时会在收到WM_NCDESTROY后收到wParam为SC_CLOSE的WM_SYSCOMMAND
@@ -479,21 +354,10 @@ public:
 		return lRes;
 	}
 
-	LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	LRESULT HandleCustomMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		LRESULT lRes = 0;
-		BOOL bHandled = TRUE;
 		switch( uMsg ) {
-		case WM_CREATE:        lRes = OnCreate(uMsg, wParam, lParam, bHandled); break;
-		case WM_CLOSE:         lRes = OnClose(uMsg, wParam, lParam, bHandled); break;
-		case WM_DESTROY:       lRes = OnDestroy(uMsg, wParam, lParam, bHandled); break;
-		case WM_NCACTIVATE:    lRes = OnNcActivate(uMsg, wParam, lParam, bHandled); break;
-		case WM_NCCALCSIZE:    lRes = OnNcCalcSize(uMsg, wParam, lParam, bHandled); break;
-		case WM_NCPAINT:       lRes = OnNcPaint(uMsg, wParam, lParam, bHandled); break;
-		case WM_NCHITTEST:     lRes = OnNcHitTest(uMsg, wParam, lParam, bHandled); break;
-		case WM_SIZE:          lRes = OnSize(uMsg, wParam, lParam, bHandled); break;
-		case WM_GETMINMAXINFO: lRes = OnGetMinMaxInfo(uMsg, wParam, lParam, bHandled); break;
-		case WM_SYSCOMMAND:    lRes = OnSysCommand(uMsg, wParam, lParam, bHandled); break;
 		case WM_LBUTTONDOWN:
 		case WM_NCLBUTTONDOWN:
 			{
@@ -503,96 +367,103 @@ public:
 			}
 		case WM_ACTIVATEAPP:
 			{
-				if((BOOL)wParam == FALSE)
+				if((BOOL)wParam == FALSE && IsWindow(m_pSearchWnd->GetHWND()))
 				{
 					m_pSearchWnd->ShowWindow(false);
 				}
 				bHandled = FALSE;
 				break;
 			}
-		case WM_SHOWWINDOW:
-			{
-				bHandled = FALSE;
-				
-				break;
-			}
-		case  WM_MOUSEWHEEL:
-			{
-				POINT ptMouse;
-				GetCursorPos(&ptMouse);
-				HWND hWnd = WindowFromPoint(ptMouse);
-
-				if(::IsWindow(hWnd) && hWnd == m_pSearchWnd->GetHWND())
-				{
-					::SendMessage(hWnd, WM_MOUSEWHEEL, wParam, lParam);
-				}
-				else
-				{
-					bHandled = FALSE;
-				}
-				break;
-			}
 		default:
-		bHandled = FALSE;
+			bHandled = FALSE;
 		}
-		if( bHandled ) return lRes;
-		if( m_pm.MessageHandler(uMsg, wParam, lParam, lRes) ) return lRes;
-		return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+
+		return lRes;
 	}
 
 public:
-	CPaintManagerUI m_pm;
-
-private:
-	CButtonUI* m_pCloseBtn;
-	CButtonUI* m_pMaxBtn;
-	CButtonUI* m_pRestoreBtn;
-	CButtonUI* m_pMinBtn;
 	CTileLayoutUI* m_pGameList;
-	CTileLayoutUI* m_pBaiduList;
 	CHorizontalLayoutUI* m_pFindList;
-
 	CSearchWnd *m_pSearchWnd;
-	//...
 };
 
-static LPBYTE resource_zip_buffer_ = NULL;
+void InitResource()
+{	
+	// 资源类型
+#ifdef _DEBUG
+	CPaintManagerUI::SetResourceType(UILIB_FILE);
+#else
+	CPaintManagerUI::SetResourceType(UILIB_ZIPRESOURCE);
+#endif
+	// 资源路径
+	CDuiString strResourcePath = CPaintManagerUI::GetInstancePath();
+	// 加载资源
+	switch(CPaintManagerUI::GetResourceType())
+	{
+	case UILIB_FILE:
+		{
+			strResourcePath += _T("skin\\gamebox\\");
+			CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
+			// 加载资源管理器
+			CResourceManager::GetInstance()->LoadResource(_T("res.xml"), NULL);
+			break;
+		}
+	case UILIB_RESOURCE:
+		{
+			strResourcePath += _T("skin\\gamebox\\");
+			CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
+			// 加载资源管理器
+			CResourceManager::GetInstance()->LoadResource(_T("IDR_RES"), _T("xml"));
+			break;
+		}
+	case UILIB_ZIP:
+		{
+			strResourcePath += _T("skin\\");
+			CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
+			CPaintManagerUI::SetResourceZip(_T("gamebox.zip"), true);
+			// 加载资源管理器
+			CResourceManager::GetInstance()->LoadResource(_T("res.xml"), NULL);
+			break;
+		}
+	case UILIB_ZIPRESOURCE:
+		{
+			strResourcePath += _T("skin\\gamebox\\");
+			CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
 
-//#define USE_EMBEDED_RESOURCE
+			HRSRC hResource = ::FindResource(CPaintManagerUI::GetResourceDll(), _T("IDR_ZIPRES"), _T("ZIPRES"));
+			if( hResource != NULL ) {
+				DWORD dwSize = 0;
+				HGLOBAL hGlobal = ::LoadResource(CPaintManagerUI::GetResourceDll(), hResource);
+				if( hGlobal != NULL ) {
+					dwSize = ::SizeofResource(CPaintManagerUI::GetResourceDll(), hResource);
+					if( dwSize > 0 ) {
+						CPaintManagerUI::SetResourceZip((LPBYTE)::LockResource(hGlobal), dwSize);
+						// 加载资源管理器
+						CResourceManager::GetInstance()->LoadResource(_T("res.xml"), NULL);
+					}
+				}
+				::FreeResource(hResource);
+			}
+		}
+		break;
+	}
+
+
+	// 注册控件
+	//REGIST_DUICONTROL(CLabelIconUI);
+	//REGIST_DUICONTROL(CGameItemUI);
+	//REGIST_DUICONTROL(CGameListUI);
+	//REGIST_DUICONTROL(CLabelMutilineUI);
+}
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int nCmdShow)
 {
-	CPaintManagerUI::SetInstance(hInstance);
-	
-#ifdef USE_EMBEDED_RESOURCE
-	HRSRC hResource = ::FindResource(CPaintManagerUI::GetResourceDll(), MAKEINTRESOURCE(IDR_ZIPRES), _T("ZIPRES"));
-	if( hResource == NULL )
-		return 0L;
-	DWORD dwSize = 0;
-	HGLOBAL hGlobal = ::LoadResource(CPaintManagerUI::GetResourceDll(), hResource);
-	if( hGlobal == NULL ) {
-		FreeResource(hResource);
-		return 0L;
-	}
-	dwSize = ::SizeofResource(CPaintManagerUI::GetResourceDll(), hResource);
-	if( dwSize == 0 )
-		return 0L;
-	resource_zip_buffer_ = new BYTE[ dwSize ];
-	if (resource_zip_buffer_ != NULL)
-	{
-		::CopyMemory(resource_zip_buffer_, (LPBYTE)::LockResource(hGlobal), dwSize);
-	}
-
-	::FreeResource(hResource);
-	CPaintManagerUI::SetResourceZip(resource_zip_buffer_, dwSize);
-#else
-	CPaintManagerUI::SetResourcePath(CPaintManagerUI::GetInstancePath() + _T("skin\\GameBox"));//
-	//CPaintManagerUI::SetResourceZip(_T("gamebox.zip"));
-#endif
-
-
 	HRESULT Hr = ::CoInitialize(NULL);
 	if( FAILED(Hr) ) return 0;
+	// 初始化UI管理器
+	CPaintManagerUI::SetInstance(hInstance);
+	// 初始化资源
+	InitResource();
 
 	CGameBoxFrame* pFrame = new CGameBoxFrame();
 	if( pFrame == NULL ) return 0;

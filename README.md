@@ -18,3 +18,10 @@ DuiLib_Ultimate是DuiLib库的增强拓展版，库修复了大量用户在使�
 
 9、项目内置各种使用例子与编译选项（多字节Unicode，静态库和动态库）
 
+
+## 此版本 DuiLib 加载皮肤的方式
+
+- UILIB_FILE
+- UILIB_RESOURCE        被弃用
+- UILIB_ZIP
+- UILIB_ZIPRESOURCE

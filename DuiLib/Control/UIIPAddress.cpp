@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include <Winsock.h>
 #pragma comment( lib, "ws2_32.lib" )
 
 DWORD GetLocalIpAddress()   

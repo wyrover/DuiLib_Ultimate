@@ -39,31 +39,22 @@ void InitResource()
 		{
 			strResourcePath += _T("..\\skin\\ADMonSetup\\");
 			CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
-			// 加载资源管理器
-			CResourceManager::GetInstance()->LoadResource(_T("res.xml"), NULL);
+			
 			break;
-		}
-	case UILIB_RESOURCE:
-		{
-			strResourcePath += _T("skin\\ADMonSetup\\");
-			CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
-			// 加载资源管理器
-			CResourceManager::GetInstance()->LoadResource(_T("IDR_RES"), _T("xml"));
-			break;
-		}
+		}	
 	case UILIB_ZIP:
 		{
 			strResourcePath += _T("skin\\");
 			CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
 			CPaintManagerUI::SetResourceZip(_T("ADMonSetup.zip"), true);
-			// 加载资源管理器
-			CResourceManager::GetInstance()->LoadResource(_T("res.xml"), NULL);
+			
 			break;
 		}
 	case UILIB_ZIPRESOURCE:
 		{
-			strResourcePath += _T("skin\\ADMonSetup\\");
-			CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
+			// 当设置为 UILIB_ZIPRESOURCE 时，再设置  SetResourcePath 好像没有意义
+			//strResourcePath += _T("skin\\ADMonSetup\\11111111111\\111111111111");
+			//CPaintManagerUI::SetResourcePath(strResourcePath.GetData());
 
 			HRSRC hResource = ::FindResource(CPaintManagerUI::GetResourceDll(), _T("IDR_ZIPRES"), _T("ZIPRES"));
 			if( hResource != NULL ) {

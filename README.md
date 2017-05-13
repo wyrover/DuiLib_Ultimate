@@ -21,10 +21,10 @@ DuiLib_Ultimate是DuiLib库的增强拓展版，库修复了大量用户在使�
 
 ## 此版本 DuiLib 加载皮肤的方式
 
-- UILIB_FILE
-- UILIB_RESOURCE        被弃用
-- UILIB_ZIP
-- UILIB_ZIPRESOURCE
+- UILIB_FILE            从文件目录加载皮肤
+- UILIB_RESOURCE        被弃用(不实用)
+- UILIB_ZIP             从 zip 文件加载皮肤
+- UILIB_ZIPRESOURCE     从资源中加载二进制 zip 资源
 
 
 ## git 流程
